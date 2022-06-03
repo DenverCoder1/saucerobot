@@ -6,6 +6,7 @@ Run the bot with `python -m reddit_bot`
 
 import asyncio
 import logging
+import re
 import urllib.parse
 from math import floor
 from typing import Optional
@@ -106,6 +107,17 @@ class SauceBot:
         domain = parsed.host if parsed.host else url
         return domain.replace("www.", "", 1)
 
+    def extract_url_from_text(self, text: str) -> Optional[str]:
+        """Extracts the first url from the text."""
+        url = re.search(r"(https?://\S+)", text)
+        if url is None:
+            return None
+        return url.group(0)
+
+    def is_image_url(self, url: str) -> bool:
+        """Determines whether or not a url is an image url."""
+        return "/r/" not in url
+
     async def build_reply(self, comment: asyncpraw.reddit.Comment) -> Optional[str]:
         """Builds the reply to a comment.
 
@@ -114,17 +126,31 @@ class SauceBot:
         """
         # load the submission to get the image url
         await comment.submission.load()
-        parent_post_url = comment.submission.url
-        # skip if the parent post is a self post
-        if "/r/" in parent_post_url:
-            logging.info(f"Skipping since it is in a self post. {parent_post_url}")
+        # try the submission url first
+        url = comment.submission.url
+        # if it's not an image url, try searching the comment body
+        if not url or not self.is_image_url(url):
+            url = self.extract_url_from_text(comment.body)
+        # if it's not an image url, try searching the submission selftext
+        if not url or not self.is_image_url(url):
+            url = self.extract_url_from_text(comment.submission.selftext)
+        # if it's not an image url, try searching the parent comment body
+        if not url or not self.is_image_url(url):
+            replied_comment = await comment.parent()
+            if isinstance(replied_comment, asyncpraw.reddit.Comment):
+                url = self.extract_url_from_text(replied_comment.body)
+        # if it's not an image url, skip the comment
+        if not url or not self.is_image_url(url):
+            logging.info(f"Skipping since no image URL was found. {comment.permalink}")
             return None
         # fetch sauce
         async with self.saucenao as saucenao:
             results = await saucenao.from_url(parent_post_url)
+            results = await saucenao.from_url(url)
         # build reply from results
         search_links = self.image_search_links(parent_post_url)
         reply = f"Here are the results from [SauceNAO]({search_links['SauceNAO']}):\n\n"
+        search_links = self.image_search_links(url)
         result_table = [
             [
                 f"**{result.title}** by {result.author}",
