@@ -34,7 +34,13 @@ class SauceBot:
         # set of seen comment ids
         self.seen: set[str] = set()
 
-        self.reddit = asyncpraw.Reddit("saucerobot")
+        self.reddit = asyncpraw.Reddit(
+            client_id=config.REDDIT_CLIENT_ID,
+            client_secret=config.REDDIT_CLIENT_SECRET,
+            user_agent=f"u/{config.REDDIT_USERNAME} by u/{config.REDDIT_BOT_AUTHOR}",
+            username=config.REDDIT_USERNAME,
+            password=config.REDDIT_PASSWORD,
+        )
         self.saucenao = AIOSauceNao(config.SAUCENAO_API_KEY)
         self.me: Optional[asyncpraw.reddit.Redditor] = None
 

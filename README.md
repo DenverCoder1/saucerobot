@@ -16,11 +16,11 @@ The exact command may vary depending on your Operating System and Python install
 
 ## Configuration
 
-### SauceNAO API
-
 Create a copy of `.env.example` and name it `.env`
 
 In the `.env` file, you must set the following environment variables:
+
+### SauceNAO API
 
 * `SAUCENAO_API_KEY` - Your SauceNAO API key
 
@@ -28,13 +28,10 @@ To receive your SauceNAO API key, visit [SauceNAO](https://saucenao.com/user.php
 
 ### Reddit Bot
 
-Create a copy of `praw.ini.example` and name it `praw.ini`
-
-In the `praw.ini` file, you must set the following variables under the `[saucerobot]` section:
-
-* `username` - Your bot's username
-* `password` - Your bot's password
-* `client_id` - Your bot's client ID
-* `client_secret` - Your bot's client secret
+* `REDDIT_USERNAME` - Your bot's Reddit username
+* `REDDIT_PASSWORD` - Your bot's Reddit password
+* `REDDIT_CLIENT_ID` - Your Reddit client ID
+* `REDDIT_CLIENT_SECRET` - Your Reddit client secret
+* `REDDIT_BOT_AUTHOR` - The author of the bot
 
 To obtain the client ID and client secret, visit [Reddit App Preferences](https://www.reddit.com/prefs/apps/) and create a new application while signed in as your bot.
