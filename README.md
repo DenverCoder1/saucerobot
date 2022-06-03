@@ -2,7 +2,7 @@
 
 Bot for fetching image sources
 
-![screenshot](https://user-images.githubusercontent.com/20955511/171333950-e9a6997e-c343-4aed-b14f-f59b048e5bc0.png)
+![screenshot](https://user-images.githubusercontent.com/20955511/171797888-2b42bf60-522e-4a7a-adf7-0154d0ddb8b2.png)
 
 ## Running the bot
 
