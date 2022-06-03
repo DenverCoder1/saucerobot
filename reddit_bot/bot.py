@@ -145,11 +145,8 @@ class SauceBot:
             return None
         # fetch sauce
         async with self.saucenao as saucenao:
-            results = await saucenao.from_url(parent_post_url)
             results = await saucenao.from_url(url)
         # build reply from results
-        search_links = self.image_search_links(parent_post_url)
-        reply = f"Here are the results from [SauceNAO]({search_links['SauceNAO']}):\n\n"
         search_links = self.image_search_links(url)
         result_table = [
             [
@@ -160,21 +157,27 @@ class SauceBot:
             for result in results
             if result.similarity > self.SIMILARITY_THRESHOLD
         ]
+        reply = ""
         # no results
         if len(result_table) == 0:
-            logging.info(f"No results found. https://reddit.com{comment.permalink}")
-            return None
-        reply += table2ascii(
-            header=["Title", "Link", "Similarity"],
-            body=result_table,
-            style=PresetStyle.markdown,
-        )
+            reply += (
+                f"No similar images found from [SauceNAO]({search_links['SauceNAO']})."
+            )
+        else:
+            reply += (
+                f"Here are the results from [SauceNAO]({search_links['SauceNAO']}):\n\n"
+            )
+            reply += table2ascii(
+                header=["Title", "Link", "Similarity"],
+                body=result_table,
+                style=PresetStyle.markdown,
+            )
         # add search links (\u00B7 is a middle dot)
         reply += "\n\n" + " \u00B7 ".join(
             f"[{name}]({url})" for name, url in search_links.items()
         )
-        # add feedback link
-        reply += f"\n\n[Source Code]({self.source_link()}) \u00B7 [Feedback]({self.feedback_link()})"
+        # add feedback and source links
+        reply += f"\n\n----\n\n[Source Code]({self.source_link()}) \u00B7 [Feedback]({self.feedback_link()})"
         return reply
 
     async def start(self):
