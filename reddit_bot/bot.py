@@ -96,6 +96,10 @@ class SauceBot:
         assert self.me is not None
         return f"https://www.reddit.com/message/compose/?to={self.me.name}"
 
+    def source_link(self):
+        """Returns the link to the source code."""
+        return "https://github.com/DenverCoder1/saucerobot"
+
     def get_domain(self, url: str) -> str:
         """Returns the domain of a url (e.g. https://google.com/ -> google.com)."""
         parsed = yarl.URL(url)
@@ -144,7 +148,7 @@ class SauceBot:
             f"[{name}]({url})" for name, url in search_links.items()
         )
         # add feedback link
-        reply += f"\n\n[Feedback]({self.feedback_link()})"
+        reply += f"\n\n[Source Code]({self.source_link()}) \u00B7 [Feedback]({self.feedback_link()})"
         return reply
 
     async def start(self):
