@@ -31,7 +31,7 @@ class SauceBot:
         # seconds to wait between checking for new comments
         self.COMMENT_CHECK_INTERVAL = 10
         # minimum similarity required to include in the reply
-        self.SIMILARITY_THRESHOLD = 75
+        self.SIMILARITY_THRESHOLD = 65
         # set of seen comment ids
         self.seen: set[str] = set()
 
